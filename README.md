@@ -1,5 +1,6 @@
 app m7_python
 proyecto my_site
+## HITO 1
 
 # Pasos para crear el proyecto
 1. Crear entorno virtual
@@ -67,7 +68,7 @@ python manage.py makemigrations
 python manage.py migrate
 
 \dt;
-SELECT * FROM testdb_adltest;
+SELECT * FROM m7_python_inmueble;
 ```
 11. Crear usuario y contraseña
 ```bash
@@ -79,60 +80,37 @@ Nico1017
 5. Conectarse a la shell de django
 ```
 python manage.py shell
-
+```
 from m7_python.models import Comuna,UserProfile,User,Solicitud,Inmueble,Region
 from datetime import date
+```
+from m7_python.services import crear_usuario,crear_region,crear_comuna,crear_inmueble,listar_propiedades,actualizar_disponibilidad,eliminar_inmueble
+```
+from m7_python.temp import get_list_inmuebles_sql
 
-from m7_python.services import crear_usuario,crear_region,crear_comuna,crear_inmueble,listar_propiedades
-
-User.objects.get(id=2).delete()
 ```
 6. Usemos las funciones
 ```
 u1 = crear_usuario(username='nico10',first_name='Nicol',last_name='Matu',email='nico@gmail.com',password='1234')
 r1 = crear_region(cod_region='5',nombre_region='Metropolitana')
 c1 = crear_comuna(cod_comuna='21',nombre_comuna='Maipu',region_id='5')
-
+```
 c = crear_comuna(cod_region='5',nombre_region='Metropolitana',cod_comuna='21',nombre_comuna='Maipu')
-
+```
 i1 = crear_inmueble(nombre='casa1',descripcion='amplia casa ubicada en pleno centro de la comuna', m2_construidos=114,m2_totales=150,num_estacionamientos=1,num_habitaciones=3,num_baños=2,direccion='Chacabuco #144',tipo_inmueble='casa',precio=100000000,precio_ufs=320,disponible=True,comuna_id='21',arrendador_id=2)
-
+```
 ver_propiedades = listar_propiedades()
-----------
-v1 = crear_vehiculo(patente='1234',marca='ford',modelo='F-150',year=2015,activo=True)
-v2 = crear_vehiculo(patente='4569',marca='fiat',modelo='500',year=2021,activo=True)
-v3 = crear_vehiculo(patente='7885',marca='toyota',modelo='T-78',year=2010,activo=True)
-
-c1 = crear_chofer(rut='123456',nombre='eduardo',apellido='perez',activo=True,creacion_registro=date(2021,1,8),vehiculo_id='1234')
-c2 = crear_chofer(rut='147852',nombre='camilo',apellido='donoso',activo=True,creacion_registro=date(2022,4,3),vehiculo_id='7885')
-
-r1 = crear_registro_contable(fecha_compra=date(2021,1,9),vehiculo_id='1234',valor=30000)
-r2 = crear_registro_contable(fecha_compra=date(2015,4,19),vehiculo_id='4569',valor=870000)
-
-deshabilitar_chofer =deshabilitar_chofer(rut='123456')
-
-obtener_vehiculo = obtener_vehiculo('1234')
-print(obtener_vehiculo)
-
-obtener_chofer = obtener_chofer(rut='123456')
-print(obtener_chofer)
-
-v3.chofer.nombre
-```
-
-7. Para eliminar registros
-```
-Chofer.objects.filter(rut='123456').delete()
-Vehiculo.objects.get().delete()
 ``` 
 
 ## HITO 2
 
 8. Creamos archivo temp.py
-
+```
+python m7_python TEMP.PY
+```
 9. Poblar datos a partir de la app
 ```
 python manage.py loaddata m7_python/data/users.json
 python manage.py loaddata m7_python/data/regiones_comunas.json
-
+python manage.py loaddata m7_python/data/inmuebles.json
 ```
