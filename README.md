@@ -103,14 +103,17 @@ ver_propiedades = listar_propiedades()
 ``` 
 
 ## HITO 2
-
-8. Creamos archivo temp.py
-```
-python m7_python TEMP.PY
-```
-9. Poblar datos a partir de la app
+8. Poblar datos a partir de la app
 ```
 python manage.py loaddata m7_python/data/users.json
 python manage.py loaddata m7_python/data/regiones_comunas.json
 python manage.py loaddata m7_python/data/inmuebles.json
 ```
+
+9. Creamos archivo temp.py
+
+10. Corremos el archivo temp.py
+```
+python m7_python/temp.py
+```
+
