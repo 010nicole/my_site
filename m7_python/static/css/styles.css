@@ -1,0 +1,17 @@
+#navbar{
+    margin-bottom: 10px;
+    background-color:rgb(38, 187, 187);
+}
+#footer {
+    background-color: rgb(38, 187, 187);
+    margin-top: 10px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+#footer i {
+    font-size: 30px;
+    margin: 10px;
+}

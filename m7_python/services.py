@@ -1,5 +1,18 @@
 from .models import Comuna,UserProfile,User,Solicitud,Inmueble,Region
 
+def get_or_create_user_profile(user):
+    try:
+        # Intenta obtener el perfil del usuario o crearlo si no existe
+        user_profile, created = UserProfile.objects.get_or_create(user=user)
+        if created:
+            print("Se ha creado un nuevo perfil para el usuario.")
+        else:
+            print("El perfil ya existía.")
+        return user_profile
+    except Exception as e:
+        print(f'Error al obtener o crear el perfil del usuario. {e}')
+        return None
+    
 def crear_usuario(username,first_name,last_name,email,password):
     usuario = User.objects.create(username=username,first_name=first_name,last_name=last_name,email=email,password=password)
     return usuario
@@ -64,10 +77,18 @@ def eliminar_inmueble(id):
             'success': False,
             'message': "Error al eliminar inmueble"
         }
-        
-# def crear_comuna(cod_region,nombre_region,cod_comuna,nombre_comuna):
-#     region = Region.objects.create(cod=cod_region,nombre=nombre_region)
-#     comuna = Comuna.objects.create(cod=cod_comuna,nombre=nombre_comuna)
-#     comuna.region = region
-#     comuna.save()
-#     return comuna
+
+def get_all_inmuebles():
+    inmuebles = Inmueble.objects.all()
+    return inmuebles
+
+def get_inmuebles_for_arrendador(user):
+    rol = user.user_profile.rol 
+    if rol != 'arrendador':
+        print(f'no es arrendador')
+        return [] 
+    inmuebles = Inmueble.objects.filter(arrendador=user)
+    if not inmuebles.exists():
+        print(f'no hay inmuebles')
+        return []
+    return inmuebles

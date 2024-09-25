@@ -60,4 +60,11 @@ class Solicitud(models.Model):
     #* este es un USER de de tipo rol 'arrendatario' en el UserProfile
     fecha = models.DateTimeField(auto_now_add=True)
     estado = models.CharField(max_length=50, choices=ESTADOS, default='pendiente')
-  
+
+class ContactForm(models.Model):
+    customer_email = models.EmailField()
+    customer_name = models.CharField(max_length=64)
+    message = models.TextField()
+    
+    def __str__(self):
+        return self.customer_name
