@@ -157,7 +157,7 @@ python m7_python/temp.py
 ```bash
 python manage.py flush
 ```
-
+## HITO 3
 1. Crear página web básica donde arrendadores puedan agregar nuevos inmuebles.
     - a. Generar las rutas para la vista para agregar nuevas viviendas.
     - b. Generar el objeto de formulario.
