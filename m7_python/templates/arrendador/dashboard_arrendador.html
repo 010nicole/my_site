@@ -27,7 +27,7 @@
                   No Disponible
               </div>
           {% endif %}
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{% url 'detail_inmueble' inmueble_id=i.id %}">
               <div class="card">
                 <img
                   src="https://definicion.de/wp-content/uploads/2010/12/casa.jpg"
@@ -38,8 +38,8 @@
                   <h5 class="card-title">{{ i.nombre }}</h5>
                   <p class="card-text">{{ i.descripcion }}</p>
                   <p class="card-text">{{ i.comuna.nombre }}</p>
-                  <a class="btn btn-primary" href="#">Editar</a>
-                  <a class="btn btn-danger ms-2" href="#">Eliminar</a>
+                  <a class="btn btn-primary" href="{% url 'edit_inmueble' inmueble_id=i.id %}">Editar</a>
+                  <a class="btn btn-danger ms-2" href="{% url 'delete_inmueble' inmueble_id=i.id %}">Eliminar</a>
                
                 </div>
               </div>

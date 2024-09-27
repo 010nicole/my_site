@@ -152,3 +152,32 @@ python m7_python/temp.py
     - home - Index -> 3 posibilidades   1 (form login + register) 2 Arrendador 3 Arrendatario
     - dashboard_arrendador (filter diferenciado de lista de inmuebles)
     - dashboard_arrendatario  (filter diferenciado de lista de inmuebles)
+
+## PARA LIMPIAR MODELOS
+```bash
+python manage.py flush
+```
+
+1. Crear página web básica donde arrendadores puedan agregar nuevos inmuebles.
+    - a. Generar las rutas para la vista para agregar nuevas viviendas.
+    - b. Generar el objeto de formulario.
+    - c. Agregar la función para guardar el objeto.
+
+2. Crear página web básica donde arrendadores puedan actualizar/borrar un inmueble existente.
+    - a. Generar las rutas para la vista para actualizar las viviendas por usuario.
+    - b. Generar el objeto de formulario en base a él modelo definido.
+    - c. Agregar la función para actualizar el objeto.
+
+3. Crear una página web básica donde los arrendatarios puedan ver la oferta disponible. 
+    - a. Generar las rutas para ver las viviendas.
+    - b. Crear la vista y el controlador que le permitan enlistar las viviendas.
+```py
+# Filtrar todos los inmuebles del userArrendador
+path('dashboard_arrendador/',views.dashboardView_arrendador,name='dashboard_arrendador'),
+path('new_inmueble/',views.new_inmuebleView,name='new_inmueble'),
+path('edit_inmueble/',views.new_inmuebleView,name='edit_inmueble'),
+path('list_solicitudes/',views.new_inmuebleView,name='list_solicitudes'),
+
+# Filtrar todos los inmuebles disponibles
+path('dashboard_arrendatario/',views.dashboardView_arrendatario,name='dashboard_arrendatario'),
+path('crear_solicitud/',views.new_inmuebleView,name='crear_solicitud'),

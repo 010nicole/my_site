@@ -1,20 +1,28 @@
-from django.shortcuts import render, redirect
-from .services import get_all_inmuebles, get_or_create_user_profile, get_inmuebles_for_arrendador
+from django.shortcuts import render, redirect, get_object_or_404
+from .services import get_all_inmuebles, get_or_create_user_profile, get_inmuebles_for_arrendador,create_inmueble_for_arrendador, actualizar_disponibilidad_inmueble
 from django.contrib.auth.decorators import login_required
-from .forms import CustomUserCreationForm, UserProfileForm, ContactModelForm, UserForm, UserEditProfileForm
-from .models import UserProfile, ContactForm
+from .forms import CustomUserCreationForm, UserProfileForm, ContactModelForm, UserForm, UserEditProfileForm, InmuebleForm, EditDisponibilidadForm
+from .models import UserProfile, ContactForm, Inmueble, Solicitud, User
 from django.contrib.auth import login
 from django.contrib import messages  # type: ignore
+from .decorators import rol_requerido
 
 # Create your views here.
+
+#* Route para manejo de NOT_AUTH
+def not_authorized_view(request):
+    return render(request, "not_authorized.html", {})
+
+
 @login_required
 def indexView(request):
     if request.user.is_authenticated:
         profile = get_or_create_user_profile(request.user)
         if profile.rol == 'arrendador':
-            messages.success(request,'GENIAL')
+            messages.success(request,'arrendador')
             return redirect('dashboard_arrendador')
         elif profile.rol == 'arrendatario':
+            messages.success(request,'arrendatario')
             return redirect('index_arrendatario')
         else:
             return redirect('login')
@@ -26,12 +34,12 @@ def indexView(request):
 @login_required
 def index_arrendatario(request):
     inmuebles = get_all_inmuebles()
-    return render(request,'arrendador/dashboard_arrendador.html',{'inmuebles':inmuebles} )
+    return render(request,'arrendatario/index_arrendatario.html',{'inmuebles':inmuebles} )
 
 @login_required
 def dashboard_arrendador(request):
     inmuebles = get_inmuebles_for_arrendador(request.user)
-    return render(request,'arrendatario/index_arrendatario.html',{'inmuebles':inmuebles} )
+    return render(request,'arrendador/dashboard_arrendador.html',{'inmuebles':inmuebles} )
 
 
 
@@ -112,3 +120,94 @@ def contact(request):
     else: 
         form = ContactModelForm()   
     return render(request, 'contact.html', {'form':form})
+
+
+#TODO__ ARRENDADOR - VIEWS
+
+@login_required
+@rol_requerido('arrendador')
+def create_inmueble(request):
+    if request.method == 'POST':
+        form = InmuebleForm(request.POST)
+        if form.is_valid():
+            inmueble = create_inmueble_for_arrendador(request.user, form.cleaned_data)
+            return redirect('dashboard_arrendador')
+    else: 
+        form = InmuebleForm()
+    return render(request, 'arrendador/create_inmueble.html', {'form': form})
+
+@login_required
+def edit_inmueble(request, inmueble_id):
+    inmueble_edit =  get_object_or_404(Inmueble, id=inmueble_id)
+    # inmueble_edit =  Inmueble.objects.get(pk=inmueble_id)
+    if request.method == 'POST':
+        form = InmuebleForm(request.POST, instance=inmueble_edit)
+        if form.is_valid():
+            #* Crear service para update Inmueble y validar
+            form.save()
+            return redirect('dashboard_arrendador')
+    else: 
+        form = InmuebleForm(instance=inmueble_edit)
+    return render(request, 'arrendador/edit_inmueble.html', {'form': form})
+
+@login_required
+def detail_inmueble(request, inmueble_id):
+    inmueble = get_object_or_404(Inmueble, id=inmueble_id)
+    # inmueble =  Inmueble.objects.get(id=inmueble_id)
+    return render(request, 'detail_inmueble.html', {'inmueble': inmueble})
+
+@login_required
+def delete_inmueble(request, inmueble_id):
+    inmueble = get_object_or_404(Inmueble, id=inmueble_id)
+    if request.method == 'POST':
+        inmueble.delete()
+        return redirect('dashboard_arrendador')
+
+    return render(request, 'arrendador/delete_inmueble.html', {'inmueble': inmueble})
+
+@login_required
+def detail_inmueble(request, inmueble_id):
+    inmueble = get_object_or_404(Inmueble, id=inmueble_id)
+    # inmueble =  Inmueble.objects.get(id=inmueble_id)
+    return render(request, 'detail_inmueble.html', {'inmueble': inmueble})
+
+@login_required
+def edit_disponibilidad_inmueble(request, inmueble_id):
+    inmueble = get_object_or_404(Inmueble, id=inmueble_id)
+    if request.method == 'POST':
+        form = EditDisponibilidadForm(request.POST, instance=inmueble) 
+        if form.is_valid():
+            disponible = form.cleaned_data['disponible']
+            result = actualizar_disponibilidad_inmueble(inmueble_id, disponible)
+            if result["success"]:
+                messages.success(request, result["message"])
+            else: 
+                messages.error(request, result["message"])
+            return redirect('dashboard_arrendador')
+             
+    else: 
+        form = EditDisponibilidadForm(instance=inmueble)
+    return render(request, 'arrendador/edit_disponibilidad.html', {'form': form, 'inmueble': inmueble})
+
+
+#TODO__ ARRENDATARIOS - VIEWS
+
+@login_required
+@rol_requerido('arrendatario')
+def send_solicitud(request, inmueble_id):
+    inmueble = get_object_or_404(Inmueble, id=inmueble_id)
+    if request.method == 'POST':
+        solicitud = Solicitud(arrendatario= request.user, inmueble= inmueble, estado= 'pendiente')
+        solicitud.save()
+        messages.success(request, f'Solicitud inmueble {inmueble.nombre} realizada con éxito!!!')
+        return redirect('index_arrendatario')
+    return render(request, 'arrendatario/send_solicitud.html', {'inmueble': inmueble})
+
+def view_list_user_solicitudes(request):
+    
+    arrendatario =  get_object_or_404(User, id=request.user.id)
+    solicitudes = Solicitud.objects.filter(arrendatario=arrendatario)
+    return render(request, 'arrendatario/list_user_solicitudes.html', {
+        'solicitudes': solicitudes,
+        'arrendatario': arrendatario
+    })

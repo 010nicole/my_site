@@ -39,7 +39,7 @@ def listar_propiedades():
                 'data': propiedad
             }
 
-def actualizar_disponibilidad(id,disponible):
+def actualizar_disponibilidad_inmueble(id,disponible):
     try:
         inmueble = Inmueble.objects.get(id=id)
         inmueble.disponible = disponible
@@ -79,8 +79,13 @@ def eliminar_inmueble(id):
         }
 
 def get_all_inmuebles():
-    inmuebles = Inmueble.objects.all()
-    return inmuebles
+    try: 
+        inmuebles = Inmueble.objects.filter(disponible=True) 
+        return inmuebles 
+    except Exception as e: 
+        print(f"Error al obtener los inmuebles: {str(e)}")
+        return []
+
 
 def get_inmuebles_for_arrendador(user):
     rol = user.user_profile.rol 
@@ -92,3 +97,9 @@ def get_inmuebles_for_arrendador(user):
         print(f'no hay inmuebles')
         return []
     return inmuebles
+
+def create_inmueble_for_arrendador(user, data):
+    new_inmueble = Inmueble(**data)
+    new_inmueble.arrendador = user 
+    new_inmueble.save()
+    return new_inmueble
