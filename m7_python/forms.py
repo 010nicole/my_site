@@ -1,7 +1,7 @@
 # aquí van nuestros Formularios
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
-from .models import UserProfile, ContactForm, Inmueble
+from .models import UserProfile, ContactForm, Inmueble, Solicitud
 from django.contrib.auth.models import User
 
 #TODO_ REGISTER - FORM
@@ -61,3 +61,12 @@ class EditDisponibilidadForm(forms.ModelForm):
         widgets = {
             'disponible': forms.CheckboxInput(),  # Input como checkbox (disponible o no)
         }
+
+#TODO__ FORM SOLICITUDES 
+class UpdateSolicitudEstadoForm(forms.ModelForm):
+    class Meta:
+        model = Solicitud
+        fields = ['estado']
+        widgets = {
+            'estado': forms.Select(choices=Solicitud.ESTADOS)  # ChoiseField basado en el modelo
+        } 

@@ -26,6 +26,12 @@
       {% include 'navbar.html' %}
       {% endblock %}
     </div>
+    {% if user.is_authenticated and user.user_profile.rol == 'arrendatario' and request.path == '/index' %}
+    {% block filtros %}
+    {% include 'filtros/nav_filtros.html' %}
+    {% endblock %}
+    {% endif %}
+
 
     {% block content %}
     <!-- aqui va el contendio de la extension a los demas html -->
